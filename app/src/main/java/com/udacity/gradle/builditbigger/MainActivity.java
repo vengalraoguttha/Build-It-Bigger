@@ -8,6 +8,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,10 +20,13 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
+    ProgressBar mProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mProgressBar=(ProgressBar)findViewById(R.id.progress);
     }
 
 
@@ -51,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public void tellJoke(View view) {
         //Toast.makeText(this, "Joke retrieved from Java Joke Telling Library.", Toast.LENGTH_SHORT).show();
         if(view.getId()==R.id.jokeButton){
-            new EndPointAsyncTask().execute(new Pair<Context, String>(this,null));
+            new EndPointAsyncTask(this,mProgressBar).execute();
         }
     }
 

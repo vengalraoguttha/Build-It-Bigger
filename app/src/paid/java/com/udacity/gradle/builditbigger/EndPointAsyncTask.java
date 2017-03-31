@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Pair;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.vengalrao.myapplication.backend.jokeApi.JokeApi;
 import com.example.vengalrao.myapplication.backend.jokeApi.model.MyBean;
@@ -25,6 +26,20 @@ public class EndPointAsyncTask extends AsyncTask<Pair<Context,String>,Void,Strin
     private JokeApi jokeApi;
     private Context context;
     private static final String KEY="JOKE";
+    private ProgressBar mProgressBar;
+
+    public EndPointAsyncTask(Context c ,ProgressBar progressBar){
+        context=c;
+        mProgressBar=progressBar;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if(mProgressBar!=null){
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     protected String doInBackground(Pair<Context, String>... params) {
@@ -43,8 +58,6 @@ public class EndPointAsyncTask extends AsyncTask<Pair<Context,String>,Void,Strin
                     });
             jokeApi=builder.build();
         }
-        context = params[0].first;
-        String joke = params[0].second;
 
         try {
             String j=jokeApi.setJoke(new MyBean()).execute().getData();
@@ -58,7 +71,9 @@ public class EndPointAsyncTask extends AsyncTask<Pair<Context,String>,Void,Strin
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        if(mProgressBar!=null){
+            mProgressBar.setVisibility(View.GONE);
+        }
         Intent intent=new Intent(context, JokeActivity.class);
         intent.putExtra(KEY,result);
         context.startActivity(intent);
