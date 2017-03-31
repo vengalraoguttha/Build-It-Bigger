@@ -65,7 +65,6 @@ public class EndPointAsyncTask extends AsyncTask<Pair<Context,String>,Void,Strin
 
         try {
             String j=jokeApi.setJoke(new MyBean()).execute().getData();
-
             return j;
 
         } catch (IOException e) {
@@ -76,7 +75,7 @@ public class EndPointAsyncTask extends AsyncTask<Pair<Context,String>,Void,Strin
     @Override
     protected void onPostExecute(final String result) {
         mInterstitialAd=new InterstitialAd(context);
-        mInterstitialAd.setAdUnitId(context.getString(R.string.banner_ad_unit_id));
+        mInterstitialAd.setAdUnitId(context.getString(R.string.interstitial_Ad_unit_id));
         mInterstitialAd.setAdListener(new AdListener() {
 
             @Override

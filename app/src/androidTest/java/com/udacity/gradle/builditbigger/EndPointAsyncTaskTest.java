@@ -1,12 +1,24 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
+
+import com.example.vengalrao.myapplication.backend.jokeApi.JokeApi;
+import com.example.vengalrao.myapplication.backend.jokeApi.model.MyBean;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.InstrumentationRegistry.getContext;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.*;
 
 /**
@@ -18,21 +30,53 @@ public class EndPointAsyncTaskTest{
     private static final String LOG_TAG = "NonEmptyStringTest";
 
     @Test
-    public void test() {
-
-        // Testing that Async task successfully retrieves a non-empty string
-        // You can test this from androidTest -> Run 'All Tests'
-        Log.v("NonEmptyStringTest", "Running NonEmptyStringTest test");
+    public void test(){
         String result = null;
-        EndPointAsyncTask endpointsAsyncTask = new EndPointAsyncTask(getContext(), null);
-        endpointsAsyncTask.execute();
+        EndpointsAsyncTask endPointAsyncTask=new EndpointsAsyncTask();
+        endPointAsyncTask.execute();
         try {
-            result = endpointsAsyncTask.get();
-            Log.d(LOG_TAG, "Retrieved a non-empty string successfully: " + result);
+            result = endPointAsyncTask.get(20, TimeUnit.SECONDS);
+            assertThat(result, notNullValue());
+            assertTrue(result.length() > 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertNotNull(result);
     }
 
+}
+class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
+    private JokeApi jokeApi = null;
+    @Override
+    protected String doInBackground(Context... params) {
+        if(jokeApi == null) {  // Only do this once
+            JokeApi.Builder builder = new JokeApi.Builder(AndroidHttp.newCompatibleTransport(),
+                    new AndroidJsonFactory(), null)
+                    // options for running against local devappserver
+                    // - 10.0.2.2 is localhost's IP address in Android emulator
+                    // - turn off compression when running against local devappserver
+                    .setRootUrl("http://10.0.2.2:8008/_ah/api/")
+                    .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                        @Override
+                        public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                            abstractGoogleClientRequest.setDisableGZipContent(true);
+                        }
+                    });
+            // end options for devappserver
+
+            jokeApi = builder.build();
+        }
+
+        try {
+            String j=jokeApi.setJoke(new MyBean()).execute().getData();
+
+            return j;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+
+    }
 }
