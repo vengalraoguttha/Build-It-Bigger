@@ -1,17 +1,22 @@
 package com.example.vengalrao.myapplication.backend;
 
+import com.example.Jokes;
+
 /**
  * The object model for the data we are sending through endpoints
  */
 public class MyBean {
 
-    private String myData;
-
-    public String getData() {
-        return myData;
+    private Jokes joke;
+    public MyBean(){
+        joke=new Jokes();
     }
 
-    public void setData(String data) {
-        myData = data;
+    public String getData() {
+        return joke.getJoke();
+    }
+
+    public void setData(Jokes data) {
+        joke = data;
     }
 }

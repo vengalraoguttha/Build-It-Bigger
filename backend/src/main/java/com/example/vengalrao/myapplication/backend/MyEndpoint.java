@@ -27,11 +27,8 @@ import javax.inject.Named;
 public class MyEndpoint {
 
     @ApiMethod(name = "setJoke")
-    public MyBean setJoke(@Named("name") String name) {
-        MyBean response = new MyBean();
-        response.setData("Hi, " + name);
-
-        return response;
+    public MyBean setJoke(MyBean jokeBean) {
+        return jokeBean;
     }
 
 }

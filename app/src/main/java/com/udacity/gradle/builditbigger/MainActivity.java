@@ -1,8 +1,10 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +19,6 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String KEY="JOKE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +49,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        Toast.makeText(this, "Joke retrieved from Java Joke Telling Library.", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Joke retrieved from Java Joke Telling Library.", Toast.LENGTH_SHORT).show();
         if(view.getId()==R.id.jokeButton){
-            Jokes jokes=new Jokes();
-            Intent intent=new Intent(MainActivity.this, JokeActivity.class);
-            intent.putExtra(KEY,jokes.getJoke());
-            startActivity(intent);
+            new EndPointAsyncTask().execute(new Pair<Context, String>(this,null));
         }
     }
 
